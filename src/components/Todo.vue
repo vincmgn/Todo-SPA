@@ -2,7 +2,7 @@
   <!-- Container TODO -->
   <VContainer fluid class="d-flex align-center justify-center mt-5">
     <VRow class="d-flex justify-center align-center">
-      <VCol cols="12" sm="10" md="8" lg="4" xl="2">
+      <VCol cols="12" sm="10" md="8" lg="4" xl="4">
         <!-- Title -->
         <h1 class="text-h3 d-flex justify-center pb-5">CREATE A TODO</h1>
         <!-- Form -->
@@ -37,65 +37,70 @@
   <!-- Divider -->
   <VDivider class="mt-5" />
   <!-- List of Todos -->
-  <VContainer class="mt-5">
-    <VRow class="d-flex justify-center align-center">
-      <VCol cols="12" sm="10" md="8" lg="4" xl="2">
-        <!-- Title -->
-        <h1 class="text-h4 d-flex justify-center mb-5">LIST OF TODOS</h1>
-        <!-- Cards -->
-        <VCard v-for="todo in todos" :key="todo.id" class="mx-auto mb-5 pa-2">
-          <VCardItem>
-            <!-- Title and Description -->
-            <VTextField
-              v-model="todo.title"
-              label="Title"
-              variant="outlined"
-              class="pt-2"
-              @input="updateTodoTimestamp(todo)"
-            />
-            <VTextarea
-              v-model="todo.description"
-              label="Description"
-              clear-icon="mdi-close-circle"
-              variant="outlined"
-              clearable
-              hide-details
-              @input="updateTodoTimestamp(todo)"
-            />
-            <p
-              class="text-caption mt-5 text-center teal--text font-weight-bold"
+  <VRow class="d-flex justify-center align-center mt-5">
+    <VCol cols="12" sm="10" md="8" lg="4" xl="4">
+      <!-- Title -->
+      <h1 class="text-h4 d-flex justify-center mb-5">LIST OF TODOS</h1>
+      <!-- Check if there are no todos -->
+      <div v-if="todos.length === 0" class="text-center">
+        Pas encore de todo ajouté
+      </div>
+      <!-- Cards -->
+      <VCard v-for="todo in todos" :key="todo.id" class="mb-5 mx-2 pa-2">
+        <VCardItem>
+          <!-- Title and Description -->
+          <VTextField
+            v-model="todo.title"
+            label="Title"
+            variant="outlined"
+            class="pt-2"
+            @input="updateTodoTimestamp(todo)"
+          />
+          <VTextarea
+            v-model="todo.description"
+            label="Description"
+            clear-icon="mdi-close-circle"
+            variant="outlined"
+            clearable
+            hide-details
+            @input="updateTodoTimestamp(todo)"
+          />
+          <p class="text-caption mt-5 text-center teal--text font-weight-bold">
+            Updated at: {{ formatDate(todo.updated_at) }}
+          </p>
+        </VCardItem>
+        <div class="pa-4">
+          <VDivider></VDivider>
+        </div>
+        <VCol cols="12" class="d-flex justify-space-around align-center pa-0">
+          <!-- Actions -->
+          <VCardActions class="d-flex justify-center align-center pa-0 w-100">
+            <!-- Delete Button -->
+            <VBtn
+              prepend-icon="mdi-delete"
+              color="red-darken-4"
+              variant="tonal"
+              @click="deleteTodo(todo)"
+              class="mr-5"
             >
-              Updated at: {{ formatDate(todo.updated_at) }}
-            </p>
-          </VCardItem>
-          <VCol cols="12" class="d-flex justify-space-around align-center pa-0">
-            <!-- Actions -->
-            <VCardActions>
-              <!-- Done Button -->
-              <VBtn
-                prepend-icon="mdi-check"
-                color="teal-darken-2"
-                variant="tonal"
-                @click="todo.done = !todo.done"
-              >
-                Done
-              </VBtn>
-              <!-- Delete Button -->
-              <VBtn
-                prepend-icon="mdi-delete"
-                color="red-darken-4"
-                variant="tonal"
-                @click="deleteTodo(todo)"
-              >
-                Delete
-              </VBtn>
-            </VCardActions>
-            <!-- Created At -->
-          </VCol>
-        </VCard>
-      </VCol>
-    </VRow>
-  </VContainer>
+              Delete
+            </VBtn>
+            <!-- Done Button -->
+            <VBtn
+              prepend-icon="mdi-check"
+              :color="todo.done ? 'green' : 'grey'"
+              variant="tonal"
+              @click="toggleDone(todo)"
+              class="ml-5"
+            >
+              {{ todo.done ? "Done" : "Not Done" }}
+            </VBtn>
+          </VCardActions>
+          <!-- Created At -->
+        </VCol>
+      </VCard>
+    </VCol>
+  </VRow>
   <!-- List of Todos -->
 </template>
 
@@ -161,6 +166,11 @@ const formatDate = (timestamp) => {
 // -- update todo timestamp
 const updateTodoTimestamp = (todo) => {
   todo.updated_at = new Date().getTime();
+};
+// -- toggle done
+const toggleDone = (todo) => {
+  todo.done = !todo.done;
+  updateTodoTimestamp(todo);
 };
 
 // -- on todo change, save to local storage
