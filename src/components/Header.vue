@@ -17,12 +17,13 @@
 
 <script setup>
 // IMPORTS
+import { ref } from "vue";
 import { useTheme } from "vuetify";
 import { VAppBar, VAppBarTitle, VSpacer, VSwitch } from "vuetify/components";
 
 // DATA
 const theme = useTheme();
-const darkTheme = theme.global.current.value.dark; // setup dark theme
+const darkTheme = ref(theme.global.current.value.dark); // setup dark theme
 
 // METHODS
 function toggleTheme() {
