@@ -42,13 +42,7 @@
       <!-- Title -->
       <h1 class="text-h4 d-flex justify-center mb-5">LIST OF TODOS</h1>
       <!-- Check if there are no todos -->
-      <VAlert
-        v-if="todos.length === 0"
-        type="info"
-        class="mb-5 mx-4"
-        border="left"
-        colored-border
-      >
+      <VAlert v-if="todos.length === 0" type="info" class="mb-5 mx-4">
         No todos found
       </VAlert>
 
