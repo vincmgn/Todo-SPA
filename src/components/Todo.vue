@@ -42,9 +42,16 @@
       <!-- Title -->
       <h1 class="text-h4 d-flex justify-center mb-5">LIST OF TODOS</h1>
       <!-- Check if there are no todos -->
-      <div v-if="todos.length === 0" class="text-center">
-        Pas encore de todo ajouté
-      </div>
+      <VAlert
+        v-if="todos.length === 0"
+        type="info"
+        class="mb-5 mx-4"
+        border="left"
+        colored-border
+      >
+        No todos found
+      </VAlert>
+
       <!-- Cards -->
       <VCard v-for="todo in todos" :key="todo.id" class="mb-5 mx-2 pa-2">
         <VCardItem>
@@ -119,6 +126,7 @@ import {
   VCardItem,
   VCardActions,
   VDivider,
+  VAlert,
 } from "vuetify/components";
 
 import { format } from "date-fns";
@@ -155,7 +163,7 @@ const addTodo = () => {
 
 // -- delete todo
 const deleteTodo = (todo) => {
-  todos.value = todos.value.filter((t) => t.id !== todo.id); // if t is not equal to todo, keep it
+  todos.value = todos.value.filter((t) => t !== todo);
 };
 
 // -- format date
