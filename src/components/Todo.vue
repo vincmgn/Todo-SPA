@@ -46,6 +46,7 @@
         <VCard v-for="todo in todos" class="mx-auto mb-5 pa-2">
           <VCardItem>
             <div>
+              <!-- Title and Description -->
               <VTextField
                 v-model="todo.title"
                 label="Title"
@@ -63,17 +64,23 @@
             </div>
           </VCardItem>
           <VCol cols="12" class="d-flex justify-space-around align-center">
+            <!-- Actions -->
             <VCardActions>
+              <!-- Delete Button -->
               <VBtn
                 prepend-icon="mdi-delete"
                 color="red-darken-4"
                 variant="tonal"
                 class="ml-2"
+                @click="deleteTodo(todo)"
               >
                 Delete
               </VBtn>
             </VCardActions>
-            <p class="text-caption">Created at: {{ todo.created_at }}</p>
+            <!-- Created At -->
+            <p class="text-caption">
+              Created at: {{ formatDate(todo.created_at) }}
+            </p>
           </VCol>
         </VCard>
       </VCol>
@@ -83,6 +90,7 @@
 </template>
 
 <script setup>
+// IMPORTS
 import { onMounted, ref, watch } from "vue";
 import {
   VContainer,
@@ -93,6 +101,8 @@ import {
   VTextarea,
   VBtn,
 } from "vuetify/components";
+
+import { format } from "date-fns";
 
 // DATA
 const input_title = ref("");
@@ -122,6 +132,16 @@ const addTodo = () => {
   // clear input fields
   input_title.value = "";
   input_description.value = "";
+};
+
+// -- delete todo
+const deleteTodo = (todo) => {
+  todos.value = todos.value.filter((t) => t !== todo); // if t is not equal to todo, keep it
+};
+
+// -- format date
+const formatDate = (timestamp) => {
+  return format(new Date(timestamp), "dd/MM/yyyy HH:mm a");
 };
 
 // -- on todo change, save to local storage
