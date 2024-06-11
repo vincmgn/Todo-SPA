@@ -4,7 +4,7 @@
     <VRow class="d-flex justify-center align-center">
       <VCol cols="12" sm="10" md="8" lg="4" xl="2">
         <!-- Title -->
-        <h1 class="d-flex justify-center pb-5">CREATE A TODO</h1>
+        <h1 class="text-h3 d-flex justify-center pb-5">CREATE A TODO</h1>
         <!-- Form -->
         <VForm @submit.prevent="addTodo">
           <VTextField
@@ -41,46 +41,56 @@
     <VRow class="d-flex justify-center align-center">
       <VCol cols="12" sm="10" md="8" lg="4" xl="2">
         <!-- Title -->
-        <h1 class="d-flex justify-center">LIST OF TODOS</h1>
+        <h1 class="text-h4 d-flex justify-center mb-5">LIST OF TODOS</h1>
         <!-- Cards -->
-        <VCard v-for="todo in todos" class="mx-auto mb-5 pa-2">
+        <VCard v-for="todo in todos" :key="todo.id" class="mx-auto mb-5 pa-2">
           <VCardItem>
-            <div>
-              <!-- Title and Description -->
-              <VTextField
-                v-model="todo.title"
-                label="Title"
-                variant="outlined"
-                class="pt-2"
-              />
-              <VTextarea
-                v-model="todo.description"
-                label="Description"
-                clear-icon="mdi-close-circle"
-                variant="outlined"
-                clearable
-                hide-details
-              />
-            </div>
+            <!-- Title and Description -->
+            <VTextField
+              v-model="todo.title"
+              label="Title"
+              variant="outlined"
+              class="pt-2"
+              @input="updateTodoTimestamp(todo)"
+            />
+            <VTextarea
+              v-model="todo.description"
+              label="Description"
+              clear-icon="mdi-close-circle"
+              variant="outlined"
+              clearable
+              hide-details
+              @input="updateTodoTimestamp(todo)"
+            />
+            <p
+              class="text-caption mt-5 text-center teal--text font-weight-bold"
+            >
+              Updated at: {{ formatDate(todo.updated_at) }}
+            </p>
           </VCardItem>
-          <VCol cols="12" class="d-flex justify-space-around align-center">
+          <VCol cols="12" class="d-flex justify-space-around align-center pa-0">
             <!-- Actions -->
             <VCardActions>
+              <!-- Done Button -->
+              <VBtn
+                prepend-icon="mdi-check"
+                color="teal-darken-2"
+                variant="tonal"
+                @click="todo.done = !todo.done"
+              >
+                Done
+              </VBtn>
               <!-- Delete Button -->
               <VBtn
                 prepend-icon="mdi-delete"
                 color="red-darken-4"
                 variant="tonal"
-                class="ml-2"
                 @click="deleteTodo(todo)"
               >
                 Delete
               </VBtn>
             </VCardActions>
             <!-- Created At -->
-            <p class="text-caption">
-              Created at: {{ formatDate(todo.created_at) }}
-            </p>
           </VCol>
         </VCard>
       </VCol>
@@ -100,6 +110,10 @@ import {
   VTextField,
   VTextarea,
   VBtn,
+  VCard,
+  VCardItem,
+  VCardActions,
+  VDivider,
 } from "vuetify/components";
 
 import { format } from "date-fns";
@@ -126,7 +140,7 @@ const addTodo = () => {
     title: input_title.value,
     description: input_description.value,
     done: false,
-    created_at: new Date().getTime(),
+    updated_at: new Date().getTime(),
   });
 
   // clear input fields
@@ -136,12 +150,17 @@ const addTodo = () => {
 
 // -- delete todo
 const deleteTodo = (todo) => {
-  todos.value = todos.value.filter((t) => t !== todo); // if t is not equal to todo, keep it
+  todos.value = todos.value.filter((t) => t.id !== todo.id); // if t is not equal to todo, keep it
 };
 
 // -- format date
 const formatDate = (timestamp) => {
-  return format(new Date(timestamp), "dd/MM/yyyy HH:mm a");
+  return format(new Date(timestamp), "dd/MM/yyyy hh:mm:ss a");
+};
+
+// -- update todo timestamp
+const updateTodoTimestamp = (todo) => {
+  todo.updated_at = new Date().getTime();
 };
 
 // -- on todo change, save to local storage
@@ -156,7 +175,8 @@ watch(
 // -- on component mount, get todos from local storage
 onMounted(() => {
   // get todos from local storage
-  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
+  const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+  todos.value = storedTodos;
 });
 </script>
 
