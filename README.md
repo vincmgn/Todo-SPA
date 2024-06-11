@@ -13,7 +13,7 @@ This project is a technical test conducted for the company Viviarto. It's a Sing
 
 ## 🌐 Online
 
-L'application est également accessible en ligne à l'adresse suivante : [https://limping-pies.surge.sh](https://limping-pies.surge.sh)
+The application is also accessible online at the following address: [https://limping-pies.surge.sh](https://limping-pies.surge.sh)
 
 ## 💻 Run locally
 
