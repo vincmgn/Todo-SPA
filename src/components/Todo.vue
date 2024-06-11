@@ -1,6 +1,6 @@
 <template>
   <!-- Container TODO -->
-  <VContainer fluid class="d-flex align-center justify-center fill-height">
+  <VContainer fluid class="d-flex align-center justify-center mt-5">
     <VRow class="d-flex justify-center align-center">
       <VCol cols="12" sm="10" md="8" lg="4" xl="2">
         <!-- Title -->
@@ -34,10 +34,56 @@
       </VCol>
     </VRow>
   </VContainer>
+  <!-- Divider -->
+  <VDivider class="mt-5" />
+  <!-- List of Todos -->
+  <VContainer class="mt-5">
+    <VRow class="d-flex justify-center align-center">
+      <VCol cols="12" sm="10" md="8" lg="4" xl="2">
+        <!-- Title -->
+        <h1 class="d-flex justify-center">LIST OF TODOS</h1>
+        <!-- Cards -->
+        <VCard v-for="todo in todos" class="mx-auto mb-5 pa-2">
+          <VCardItem>
+            <div>
+              <VTextField
+                v-model="todo.title"
+                label="Title"
+                variant="outlined"
+                class="pt-2"
+              />
+              <VTextarea
+                v-model="todo.description"
+                label="Description"
+                clear-icon="mdi-close-circle"
+                variant="outlined"
+                clearable
+                hide-details
+              />
+            </div>
+          </VCardItem>
+          <VCol cols="12" class="d-flex justify-space-around align-center">
+            <VCardActions>
+              <VBtn
+                prepend-icon="mdi-delete"
+                color="red-darken-4"
+                variant="tonal"
+                class="ml-2"
+              >
+                Delete
+              </VBtn>
+            </VCardActions>
+            <p class="text-caption">Created at: {{ todo.created_at }}</p>
+          </VCol>
+        </VCard>
+      </VCol>
+    </VRow>
+  </VContainer>
+  <!-- List of Todos -->
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import {
   VContainer,
   VRow,
@@ -51,8 +97,11 @@ import {
 // DATA
 const input_title = ref("");
 const input_description = ref("");
+const todos = ref([]);
 
 // METHODS
+
+// -- add new todo
 const addTodo = () => {
   // check if input fields are empty
   if (
@@ -61,12 +110,34 @@ const addTodo = () => {
   ) {
     return;
   }
-  console.log(input_title.value, input_description.value);
+
+  // add new todo to the list
+  todos.value.push({
+    title: input_title.value,
+    description: input_description.value,
+    done: false,
+    created_at: new Date().getTime(),
+  });
+
+  // clear input fields
+  input_title.value = "";
+  input_description.value = "";
 };
+
+// -- on todo change, save to local storage
+watch(
+  todos,
+  (newVal) => {
+    localStorage.setItem("todos", JSON.stringify(newVal));
+  },
+  { deep: true } // watch entire array (all elements)
+);
+
+// -- on component mount, get todos from local storage
+onMounted(() => {
+  // get todos from local storage
+  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
+});
 </script>
 
-<style scoped>
-.fill-height {
-  height: 100vh;
-}
-</style>
+<style scoped></style>
